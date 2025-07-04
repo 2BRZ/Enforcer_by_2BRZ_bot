@@ -93,19 +93,25 @@ async def zeph(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🟢 Jupiter: https://jup.ag/tokens/3oB7hyAZXqrzzbSebt3XykCrXqAX6Vv57Qdin3bVpump\n"
+        "🟢 Jupiter: https://jup.ag/tokens/3oB7hyAZXqrzzbSebt3XykCrXqAX6Vv57Qdin3bVpump
+"
         "📊 Dexscreener: https://dexscreener.com/solana/3oB7hyAZXqrzzbSebt3XykCrXqAX6Vv57Qdin3bVpump"
     )
 
 async def stake(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🔗 Stake here: https://app.streamflow.finance/staking/solana/mainnet/3P7YRV9M3y8wjtnJ8AHjd5jpV8y9k2tyfZu946NGxtpn\n"
+        "🔗 Stake here: https://app.streamflow.finance/staking/solana/mainnet/3P7YRV9M3y8wjtnJ8AHjd5jpV8y9k2tyfZu946NGxtpn
+"
         "📈 Rewards live, just like the brotherhood."
     )
 
 async def rules(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🚫 No spam\n🔗 No fake links\n✅ DYOR\n🤝 Respect the brotherhood\n👊 Brotherhood > Hype"
+        "🚫 No spam
+🔗 No fake links
+✅ DYOR
+🤝 Respect the brotherhood
+👊 Brotherhood > Hype"
     )
 
 if __name__ == '__main__':
