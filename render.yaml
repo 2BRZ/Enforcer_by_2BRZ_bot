@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: 2brz-logan-enforcer-bot
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python 2brz_logan_enforcer_bot.py"
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
