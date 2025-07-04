@@ -1,132 +1,65 @@
+
 import logging
-import os
-import random
-import requests
 from telegram import Update
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    MessageHandler,
-    ContextTypes,
-    filters
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
+import random
+
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
+logger = logging.getLogger(__name__)
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
+# Set your bot token
+BOT_TOKEN = "YOUR_BOT_TOKEN"
 
-logging.basicConfig(level=logging.INFO)
-
-# Constants
-SPAM_KEYWORDS = ["http", ".com", "t.me/", "joinchat", "airdrop", "free sol", "pump"]
-TRIVIA_QUESTIONS = [
-    "What blockchain did 2BRZ launch on?",
-    "Who are the two brothers behind 2BRZ?",
-    "What platform can you stake $2BRZ on?",
-    "Complete the phrase: DYOR or ____?",
-    "What's the name of the 2BRZ enforcer bot?"
+# Example daily questions
+daily_questions = [
+    "What’s one thing you learned about crypto this week?",
+    "If $2BRZ hit $1.00 tomorrow, what would you do first?",
+    "What makes 2BRZ different from the rest of the meme world?",
 ]
-MEME_TRIGGERS = {
-    "rekt": "💀 Rekt harder than a degen without a ledger.",
-    "rug": "🚨 Rug alert! Not on Logan's watch.",
-    "moon": "🌕 Straight to the moon — no brakes, no seatbelt.",
-    "hodl": "🛡️ HODL like Logan’s holding back a full-stack punch.",
-    "wen lambo": "🤑 Soon™. But first, stack $2BRZ and hydrate."
-}
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("⚡️ 2BRZ Logan Enforcer ready. Watching the grid.")
+# Command handlers
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_first = update.effective_user.first_name
+    await update.message.reply_text(f"👋 Welcome to 2BRZ Brotherhood, {user_first}! Type /logan or /price to get started.")
 
-async def new_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    for member in update.message.new_chat_members:
-        await update.message.reply_text(
-            "🚨 Welcome to the brotherhood, soldier. You’ve entered the digital trenches. DYOR, stay sharp, "
-            "and don’t trust links unless they come from the core. 🔒 #2BRZ"
-        )
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("🛠️ Commands:
+/start
+/help
+/price
+/logan
+/wenlambo
+/2brztrivia")
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message_text = update.message.text.lower()
+async def logan(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("🧠 LOGAN: The Enforcer of Brotherhood. No rugs. No puppets. Just raw code and real vibes. #2BRZ")
 
-    if any(kw in message_text for kw in SPAM_KEYWORDS):
-        try:
-            await update.message.delete()
-            return
-        except:
-            pass
+async def price(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("💰 Current $2BRZ Price: Check https://jup.ag/swap/SOL-2BRZ for live pricing.")
 
-    for trigger, response in MEME_TRIGGERS.items():
-        if trigger in message_text:
-            await update.message.reply_text(response)
-            return
+async def wenlambo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("🚗 WEN LAMBO? When brotherhood > hype and utility > speculation. Sit tight.")
 
-    if "2brz trivia" in message_text or "daily question" in message_text:
-        question = random.choice(TRIVIA_QUESTIONS)
-        await update.message.reply_text(f"🤔 2BRZ Daily Question:
+async def trivia(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    question = random.choice(daily_questions)
+    await update.message.reply_text(f"🤔 2BRZ Daily Question:
 {question}")
 
-# Inline commands
-async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        url = "https://price.jup.ag/v4/price?ids=3oB7hyAZXqrzzbSebt3XykCrXqAX6Vv57Qdin3bVpump"
-        data = requests.get(url).json()
-        price = data["data"]["3oB7hyAZXqrzzbSebt3XykCrXqAX6Vv57Qdin3bVpump"]["price"]
-        await update.message.reply_text(f"🟢 Current $2BRZ Price: ${price:.8f}")
-    except:
-        await update.message.reply_text("❌ Couldn't fetch price. Try again later.")
+# Main function
+def main():
+    application = ApplicationBuilder().token(BOT_TOKEN).build()
 
-async def caps(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("📈 Market cap info coming soon...")
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("price", price))
+    application.add_handler(CommandHandler("logan", logan))
+    application.add_handler(CommandHandler("wenlambo", wenlambo))
+    application.add_handler(CommandHandler("2brztrivia", trivia))
 
-async def logan(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    quotes = [
-        "Logan: I build in silence and strike in code.",
-        "Logan: Rugproof. Ruthless. Relentless.",
-        "Logan: You don’t hype a brotherhood — you earn it."
-    ]
-    await update.message.reply_text(random.choice(quotes))
-
-async def zeph(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    quotes = [
-        "Zeph: Strategic minds win long-term games.",
-        "Zeph: The market whispers. I listen.",
-        "Zeph: Calculated. Composed. Consistent."
-    ]
-    await update.message.reply_text(random.choice(quotes))
-
-async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🟢 Jupiter: https://jup.ag/tokens/3oB7hyAZXqrzzbSebt3XykCrXqAX6Vv57Qdin3bVpump
-"
-        "📊 Dexscreener: https://dexscreener.com/solana/3oB7hyAZXqrzzbSebt3XykCrXqAX6Vv57Qdin3bVpump"
-    )
-
-async def stake(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🔗 Stake here: https://app.streamflow.finance/staking/solana/mainnet/3P7YRV9M3y8wjtnJ8AHjd5jpV8y9k2tyfZu946NGxtpn
-"
-        "📈 Rewards live, just like the brotherhood."
-    )
-
-async def rules(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🚫 No spam
-🔗 No fake links
-✅ DYOR
-🤝 Respect the brotherhood
-👊 Brotherhood > Hype"
-    )
+    application.run_polling()
 
 if __name__ == '__main__':
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("price", price))
-    app.add_handler(CommandHandler("caps", caps))
-    app.add_handler(CommandHandler("logan", logan))
-    app.add_handler(CommandHandler("zeph", zeph))
-    app.add_handler(CommandHandler("links", links))
-    app.add_handler(CommandHandler("stake", stake))
-    app.add_handler(CommandHandler("rules", rules))
-    app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, new_member))
-    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
-
-    print("✅ Enforcer Bot with extras is running.")
-    app.run_polling()
+    main()
