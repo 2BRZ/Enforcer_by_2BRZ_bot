@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: 2brz-logan-enforcer
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: python 2brz_logan_enforcer_bot.py
