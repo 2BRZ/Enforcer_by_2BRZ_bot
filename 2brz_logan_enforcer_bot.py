@@ -20,7 +20,7 @@ TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Define command handlers
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("👋 Welcome to the 2BRZ Brotherhood!")
+    await update.message.reply_text("Welcome to the 2BRZ Brotherhood!")
 
 async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🏓 Pong!")
