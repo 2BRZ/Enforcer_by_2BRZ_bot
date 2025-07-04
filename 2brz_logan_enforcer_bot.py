@@ -1,77 +1,55 @@
-
-import logging
 import os
+import logging
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
-from telegram import Update, ChatMember
-from telegram.ext import (
-    ApplicationBuilder,
-    ChatMemberHandler,
-    CommandHandler,
-    ContextTypes,
-    MessageHandler,
-    filters,
-)
 
 load_dotenv()
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
 )
 
 WELCOME_MESSAGE = (
     "👋 Welcome to the 2BRZ Brotherhood!
 
 "
-    "🛡️ Please don’t spam or you’ll be removed.
-"
-    "✅ Type /help for commands.
-"
-    "#2BRZ #CryptoBuiltRight"
-)
-
-HELP_TEXT = (
     "💡 Commands:
 "
-    "/start – Activate bot
+    "/start - Start interacting with the bot
 "
-    "/help – Show this help message
-"
-    "/about – Learn more about 2BRZ"
-)
+    "/help - Show help message
 
-ABOUT_TEXT = (
-    "📡 This bot is powered by 2BRZ.
 "
-    "🚨 Logan's watching. Keep it clean.
-"
-    "🌐 Visit: https://2brz.com"
+    "🔥 Stay degen. Stay 2BRZ."
 )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🤖 Bot activated. Type /help to get started!")
+    user = update.effective_user
+    await update.message.reply_html(
+        rf"👋 Welcome to the 2BRZ Brotherhood, {user.mention_html()}!
+
+"
+        "Type /help to see what I can do."
+    )
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(HELP_TEXT)
+    await update.message.reply_text(WELCOME_MESSAGE)
 
-async def about_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(ABOUT_TEXT)
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(f"🚨 Echo: {update.message.text}")
 
-async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    for member in update.chat_member.new_chat_members:
-        await context.bot.send_message(
-            chat_id=update.chat_member.chat.id,
-            text=f"👋 Welcome to the 2BRZ Brotherhood, {member.mention_html()}!
+def main():
+    application = ApplicationBuilder().token(TOKEN).build()
 
-🛡️ Please don’t spam or you’ll be removed.
-✅ Type /help for commands.",
-            parse_mode="HTML",
-        )
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-if __name__ == "__main__":
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(CommandHandler("about", about_command))
-    app.add_handler(ChatMemberHandler(welcome, ChatMemberHandler.CHAT_MEMBER))
-    app.run_polling()
+    application.run_polling()
+
+if __name__ == '__main__':
+    main()
