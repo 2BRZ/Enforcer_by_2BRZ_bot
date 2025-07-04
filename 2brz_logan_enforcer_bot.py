@@ -1,55 +1,43 @@
-import os
+
 import logging
+import os
+import time
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-
+# Configure logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-WELCOME_MESSAGE = (
-    "👋 Welcome to the 2BRZ Brotherhood!
+# Get the bot token from environment variables
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-"
-    "💡 Commands:
-"
-    "/start - Start interacting with the bot
-"
-    "/help - Show help message
-
-"
-    "🔥 Stay degen. Stay 2BRZ."
-)
-
+# Define command handlers
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    await update.message.reply_html(
-        rf"👋 Welcome to the 2BRZ Brotherhood, {user.mention_html()}!
+    await update.message.reply_text("👋 Welcome to the 2BRZ Brotherhood!")
 
-"
-        "Type /help to see what I can do."
-    )
+async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🏓 Pong!")
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(WELCOME_MESSAGE)
+async def enforcer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🛡 Logan Enforcer is LIVE and watching 👁‍🗨")
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"🚨 Echo: {update.message.text}")
-
+# Main function to run the bot
 def main():
-    application = ApplicationBuilder().token(TOKEN).build()
+    app = ApplicationBuilder().token(TOKEN).build()
 
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("ping", ping))
+    app.add_handler(CommandHandler("enforcer", enforcer))
 
-    application.run_polling()
+    logging.info("Bot started...")
+    app.run_polling()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
