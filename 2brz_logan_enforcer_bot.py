@@ -1,28 +1,26 @@
-
 import logging
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# Replace this with your actual bot token
+# 🔐 Replace with your actual bot token
 BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
 
-# Enable logging
+# 📝 Enable logging
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-# Define a start command handler
+# 👋 Start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "👋 Welcome to the 2BRZ Brotherhood! This is Logan – your digital enforcer. I'm here to keep things tight, hype, and free of spam. Let's ride. 🚀"
-    )
+    await update.message.reply_text("🤖 Logan Enforcer Bot Activated.")
 
-# Define a help command handler
+# 🆘 Help command
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Need help? Just ask. Logan’s got your back. 💪")
+    await update.message.reply_text("Type /start to engage with the Logan Enforcer Bot.")
 
-# Main function to start the bot
+# 🚀 Main function
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
