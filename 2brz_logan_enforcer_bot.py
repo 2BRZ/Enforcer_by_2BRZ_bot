@@ -1,73 +1,75 @@
 
 import logging
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
-# BOT TOKEN: Replace with your real token
-BOT_TOKEN = "7565862724:AAFA-kZ0Q2BLY_deUkLjrmFQMHqsOjoC9fI"
-
-# Enable logging
+# LOGGING SETUP
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-logger = logging.getLogger(__name__)
 
-# /start command
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("👋 Welcome to the 2BRZ Brotherhood! Type /help to see available commands.")
+# YOUR BOT TOKEN
+BOT_TOKEN = "7565862724:AAFA-kZ0Q2BLY_deUkLjrmFQMHqsOjoC9fI"
 
-# /help command
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    commands = (
+# COMMANDS
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("👋 Welcome to the 2BRZ Brotherhood!
+This is Logan, your digital enforcer.
+Type /help to see what I can do.")
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
         "🛠️ Commands:
 "
-        "/start - Welcome message
+        "/start - Introduction
 "
-        "/help - Show this help message
+        "/help - Show this help menu
 "
         "/logan - Who is Logan?
 "
-        "/price - Get latest 2BRZ token price
+        "/price - Current 2BRZ price
 "
-        "2brz trivia - Get a random trivia
-"
-        "wen lambo - LFG 🚀"
+        "You can also say things like 'wen lambo' or '2brz trivia' for a surprise!"
     )
-    await update.message.reply_text(commands)
 
-# /logan command
-async def logan(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("💪 Logan is the Blockchain Brawler of 2BRZ. All action. No brakes.")
+async def logan_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "🧠 Logan Estrada: The Blockchain Brawler.
+"
+        "A warrior forged in code. Loyalty is his law. Action is his nature.
+"
+        "#2BRZ #HackTheMeme"
+    )
 
-# /price command
-async def price(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("📈 $2BRZ price: Check it live here: https://jup.ag/swap/SOL-2BRZ")
+async def price_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📈 $2BRZ Current Price: Check https://jup.ag/swap/SOL-2BRZ for real-time updates!"
+    )
 
-# text messages
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def handle_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.lower()
     if "wen lambo" in text:
-        await update.message.reply_text("🚗💨 Sooner than the haters expect. Buckle up.")
+        await update.message.reply_text("🚀 Sooner than the haters expect… 🏎️")
     elif "2brz trivia" in text:
-        await update.message.reply_text("🤔 2BRZ Daily Question:
-What does DYOR stand for?")
-    else:
-        await update.message.reply_text("⚡ I see you. Stay based.")
+        await update.message.reply_text("🤓 Trivia Time: What does DYOR stand for?
+(Hint: It’s the #1 rule in crypto.)")
+    elif "gm" in text or "good morning" in text:
+        await update.message.reply_text("🌞 GM Brother. Let’s dominate the chain today.")
+    elif "rekt" in text:
+        await update.message.reply_text("💀 If you’re not learning, you’re losing. We don’t get REKT — we get WISER.")
 
-# Main function
-async def main():
+# MAIN FUNCTION
+def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(CommandHandler("logan", logan))
-    app.add_handler(CommandHandler("price", price))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.add_handler(CommandHandler("logan", logan_command))
+    app.add_handler(CommandHandler("price", price_command))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_messages))
 
-    print("🚀 Bot is running...")
-    await app.run_polling()
+    app.run_polling()
 
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+if __name__ == '__main__':
+    main()
