@@ -18,9 +18,8 @@ logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
-        """🔥 Welcome to 2BRZ_Enforcer.bot — Logan's on duty.
-
-Use /weaponx to activate claws. Use /startraid to launch a raid."""
+        "🔥 Welcome to 2BRZ_Enforcer.bot — Logan's on duty.\n\n"
+        "Use /weaponx to activate claws. Use /startraid to launch a raid."
     )
 
 async def weaponx(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
