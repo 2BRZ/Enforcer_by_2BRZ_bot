@@ -6,39 +6,44 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
+LICENSE_KEY = os.getenv("LICENSE_KEY")
 
-logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+logger = logging.getLogger(__name__)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
-        """🔥 Welcome to 2BRZ_Enforcer.bot — Logan's on duty.
-
-Use /weaponx to activate claws. Use /startraid to launch a raid."""
+        "🔥 Welcome to 2BRZ_Enforcer.bot — Logan's on duty.\n\nUse /weaponx to activate claws. Use /startraid to launch a raid."
     )
 
-async def weaponx(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_photo(
-        photo="https://raw.githubusercontent.com/2BRZ/2BRZ_Enforcer/main/assets/logan_claws_out.png",
-        caption="Logan has entered Weapon X mode. LFG Raiders. 🧨"
-    )
-
-async def startraid(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("🚀 Join the Raid", callback_data="join_raid")]]
+async def weaponx(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    keyboard = [
+        [InlineKeyboardButton("🗡 LFG Raiders", callback_data='start_raid')]
+    ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("🔥 Raid initiated. Tap below to join the shill attack squad!", reply_markup=reply_markup)
+    await update.message.reply_photo(
+        photo='https://example.com/weaponx.png',
+        caption="Logan's claws are OUT. 🐺 Time to raid. Who’s coming?",
+        reply_markup=reply_markup
+    )
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
-    await query.edit_message_text(text="⚔️ Raid joined. Logan salutes you, degen.")
+    if query.data == 'start_raid':
+        await query.edit_message_caption(caption="🗡 RAID IN PROGRESS — Logan’s counting the bodies...")
 
-if __name__ == "__main__":
-    app = ApplicationBuilder().token(TOKEN).build()
+def main() -> None:
+    application = ApplicationBuilder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("weaponx", weaponx))
+    application.add_handler(CallbackQueryHandler(button_handler))
+    application.run_polling()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("weaponx", weaponx))
-    app.add_handler(CommandHandler("startraid", startraid))
-    app.add_handler(CallbackQueryHandler(button))
-
-    app.run_polling()
+if __name__ == '__main__':
+    main()
